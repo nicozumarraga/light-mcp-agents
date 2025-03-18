@@ -4,12 +4,15 @@ import logging
 import os
 import shutil
 from contextlib import AsyncExitStack
-from typing import Any
+from typing import Any, List, Dict, Optional, Type
 
 import httpx
 from dotenv import load_dotenv
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+
+from base_llm import BaseLLM
+from groq_llm import GroqLLM
 
 # Configure logging
 logging.basicConfig(
@@ -24,6 +27,7 @@ class Configuration:
         """Initialize configuration with environment variables."""
         self.load_env()
         self.api_key = os.getenv("LLM_API_KEY")
+        self.llm_provider = os.getenv("LLM_PROVIDER", "groq").lower()
 
     @staticmethod
     def load_env() -> None:
@@ -60,6 +64,20 @@ class Configuration:
         if not self.api_key:
             raise ValueError("LLM_API_KEY not found in environment variables")
         return self.api_key
+
+    def create_llm_client(self) -> BaseLLM:
+        """Create an LLM client based on the configured provider.
+
+        Returns:
+            An instance of a BaseLLM subclass.
+
+        Raises:
+            ValueError: If the LLM provider is not supported.
+        """
+        if self.llm_provider == "groq":
+            return GroqLLM(self.llm_api_key)
+        else:
+            raise ValueError(f"Unsupported LLM provider: {self.llm_provider}")
 
 
 class Server:
@@ -217,68 +235,12 @@ Arguments:
 """
 
 
-class LLMClient:
-    """Manages communication with the LLM provider."""
-
-    def __init__(self, api_key: str) -> None:
-        self.api_key: str = api_key
-
-    def get_response(self, messages: list[dict[str, str]]) -> str:
-        """Get a response from the LLM.
-
-        Args:
-            messages: A list of message dictionaries.
-
-        Returns:
-            The LLM's response as a string.
-
-        Raises:
-            httpx.RequestError: If the request to the LLM fails.
-        """
-        url = "https://api.groq.com/openai/v1/chat/completions"
-
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}",
-        }
-        payload = {
-            "messages": messages,
-            "model": "llama-3.2-90b-vision-preview",
-            "temperature": 0.7,
-            "max_tokens": 4096,
-            "top_p": 1,
-            "stream": False,
-            "stop": None,
-        }
-
-        try:
-            with httpx.Client() as client:
-                response = client.post(url, headers=headers, json=payload)
-                response.raise_for_status()
-                data = response.json()
-                return data["choices"][0]["message"]["content"]
-
-        except httpx.RequestError as e:
-            error_message = f"Error getting LLM response: {str(e)}"
-            logging.error(error_message)
-
-            if isinstance(e, httpx.HTTPStatusError):
-                status_code = e.response.status_code
-                logging.error(f"Status code: {status_code}")
-                logging.error(f"Response details: {e.response.text}")
-
-            return (
-                f"I encountered an error: {error_message}. "
-                "Please try again or rephrase your request."
-            )
-
-
 class ChatSession:
     """Orchestrates the interaction between user, LLM, and tools."""
 
-    def __init__(self, servers: list[Server], llm_client: LLMClient) -> None:
+    def __init__(self, servers: list[Server], llm_client: BaseLLM) -> None:
         self.servers: list[Server] = servers
-        self.llm_client: LLMClient = llm_client
+        self.llm_client: BaseLLM = llm_client
         self.max_tool_chain_length = 10  # Safety limit to prevent infinite loops
 
     async def cleanup_servers(self) -> None:
@@ -475,7 +437,7 @@ async def main() -> None:
         Server(name, srv_config)
         for name, srv_config in server_config["mcpServers"].items()
     ]
-    llm_client = LLMClient(config.llm_api_key)
+    llm_client = config.create_llm_client()
     chat_session = ChatSession(servers, llm_client)
     await chat_session.start()
 
