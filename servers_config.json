@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "kanye": {
+      "command": "npx",
+      "args": ["-y", "kanye-mcp"]
+    },
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BRAVE_API_KEY",
+        "mcp/brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "BSAoEddkXvVJl42ntnw8opb4pNpyuL3"
+      }
+    }
+  }
+}
