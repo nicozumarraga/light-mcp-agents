@@ -4,7 +4,7 @@ Represents MCP tools with execution capabilities.
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from mcp import ClientSession
 
@@ -116,6 +116,24 @@ class ToolRegistry:
     def clear(self) -> None:
         """Clear all registered tools."""
         self.tools.clear()
+
+    async def load_from_config(
+        self,
+        config: Dict[str, Any],
+        connection_manager: MCPConnectionManager
+    ) -> None:
+        """
+        Load tools from MCP servers defined in configuration.
+
+        Args:
+            config: Configuration dictionary
+            connection_manager: Connection manager for server access
+        """
+        # Discover tools from servers
+        servers = config.get("servers", {})
+        for server_name in servers:
+            self.logger.info(f"Discovering tools from server: {server_name}")
+            await self.discover_tools(connection_manager, server_name)
 
     async def discover_tools(
         self,

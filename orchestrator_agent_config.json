@@ -1,0 +1,13 @@
+{
+  "agent_name": "orchestrator-agent",
+  "llm_provider": "groq",
+  "llm_api_key": "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",
+  "server_mode": false,
+  "servers": {
+    "base-agent": {
+      "command": "python",
+      "args": ["agent_runner.py", "--config=base_agent_config.json", "--server-mode", "--server-name=base-agent-server"],
+      "env": {}
+    }
+  }
+}

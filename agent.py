@@ -25,12 +25,14 @@ class Agent:
         connection_manager: MCPConnectionManager,
         tool_registry: ToolRegistry,
         max_tool_chain_length: int = 10,
+        name: str = "agent"
     ):
         self.llm_client = llm_client
         self.connection_manager = connection_manager
         self.tool_registry = tool_registry
         self.max_tool_chain_length = max_tool_chain_length
-        self.logger = logging.getLogger("agent")
+        self.name = name
+        self.logger = logging.getLogger(f"agent:{name}")
 
     async def process_llm_response(self, llm_response: str) -> Tuple[str, bool, str]:
         """Process the LLM response, separate text from tool calls.
