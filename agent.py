@@ -196,5 +196,5 @@ class Agent:
                     break
 
         finally:
-            # Clean up resources
-            await self.connection_manager.disconnect_all()
+            # We no longer clean up connection manager here - that's done in main.py
+            self.logger.info("Conversation ended")

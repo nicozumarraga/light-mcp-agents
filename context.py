@@ -77,16 +77,16 @@ async def initialize_context(config: Dict[str, Any]) -> Context:
 async def cleanup_context() -> None:
     """Clean up resources in the context."""
     context = get_context()
+    logger = logging.getLogger("cleanup-context")
 
-    # Clean up all sessions
-    for server_name in list(context.sessions.keys()):
-        session = context.sessions[server_name]
-        try:
-            if hasattr(session, 'close') and callable(session.close):
-                await session.close()
-            elif hasattr(session, '__aexit__') and callable(session.__aexit__):
-                await session.__aexit__(None, None, None)
-        except Exception as e:
-            logging.error(f"Error during cleanup of session {server_name}: {e}")
+    # Log session names to help with debugging
+    if context.sessions:
+        session_names = list(context.sessions.keys())
+        logger.info(f"Sessions still in context: {session_names}")
 
-        context.remove_session(server_name)
+    # Just clear the sessions dictionary without trying to clean up individual sessions
+    # as they should be cleaned up by the connection manager
+    context.sessions.clear()
+
+    # Clear config and reset any other state as needed
+    context.config = {}

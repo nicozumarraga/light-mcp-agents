@@ -28,6 +28,9 @@ def create_llm_client(api_key: str, provider: str) -> BaseLLM:
 
 async def main() -> None:
     """Initialize and run the agent."""
+    connection_manager = None
+    agent = None
+
     try:
         # Load configuration
         config = load_config("servers_config.json")
@@ -68,9 +71,30 @@ async def main() -> None:
     except Exception as e:
         logger.error(f"Error in main: {e}", exc_info=True)
     finally:
-        # Clean up all resources
-        logger.info("Cleaning up resources...")
-        await cleanup_context()
+        logger.info("Starting cleanup process...")
+
+        # Cleanup in proper order to avoid duplicate cleanup attempts
+
+        # 1. First clean up the connection manager - this is the most important
+        # The agent's start_conversation method already calls disconnect_all on exit,
+        # but we'll do it again here just to be sure
+        if connection_manager is not None:
+            logger.info("Cleaning up connection manager...")
+            try:
+                await connection_manager.disconnect_all()
+                logger.info("Connection manager cleanup complete")
+            except Exception as e:
+                logger.error(f"Error cleaning up connection manager: {e}")
+
+        # 2. Finally, clean up the global context (this is now a passive operation)
+        logger.info("Cleaning up context...")
+        try:
+            await cleanup_context()
+            logger.info("Context cleanup complete")
+        except Exception as e:
+            logger.error(f"Error cleaning up context: {e}")
+
+        logger.info("Cleanup process complete")
 
 
 if __name__ == "__main__":
