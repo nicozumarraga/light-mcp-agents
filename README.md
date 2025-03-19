@@ -11,7 +11,8 @@ The recursive architecture is built on the MCP (Machine Conversation Protocol) s
 3. **Tool Aggregation**: Tools from lower-level agents are automatically exposed to higher-level agents.
 4. **Recursive Reasoning**: Each agent can perform its own reasoning process using its available tools.
 
-![Architecture Diagram](https://mermaid.ink/img/pako:eNp1kT1PwzAQhv-KdTMSqGlDWkpLgYEBiYEBsfTD9dGuauwrtoMURf8742QAiQFP9j3v43t8F5KaiKQilRaHljQcemsm7aHBGjS0rtcMJ-6KhQC9P8JHBZNzFn60ZDQ2_PdXA2TvgTPzM0MLYJzrcr2JObvMl_7lS3iPh37LK39KM54Pv4t4NE7QWM8FNzSh_6Ib6O58bZw5OPBK2z5wYbSkJdvp82qXvj0-p-_7l92uel_t94en9wUtnBiiwPyJl27wZBmXsw8deTFcJu4PJOiKkJSYtUYccbQuhI5L-h5MjOTyRCv6qSjfFZYgU4xKd0HbRVKJHCeU4xSjDUmT0A3oVEQ91vwqPHtmSkruNTTdRNLLiaThhf91eGYp2haj6kLl7RyOvwCbqKqT?type=png)
+<img width="725" alt="light-mcp-agents-diagram" src="https://github.com/user-attachments/assets/9a69e2da-403e-40e3-9f6f-4cf484dc7444" />
+
 
 ## Key Components
 
