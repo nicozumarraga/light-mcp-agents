@@ -7,8 +7,8 @@ This project implements a recursive agent architecture that allows agents to fun
 1. **AgentServer**: Main class that manages an agent in both client and server modes
 2. **MCPServerWrapper**: Wraps an Agent as an MCP server to expose its tools
 3. **Agent**: Core agent implementation that processes user requests and executes tools
-4. **AgentTool**: Registry for local tool implementations that can be used directly by agents
-5. **ToolRegistry**: Registry for all tools (both local and from remote servers)
+4. **CapabilityRegistry**: Registry for agent capabilities that require LLM reasoning
+5. **ToolRegistry**: Registry for all tools from MCP servers
 
 ## Installation
 
@@ -41,30 +41,35 @@ Create a configuration file for your agent (e.g., `my_agent_config.json`):
 }
 ```
 
-### Agent with Local Tools
+### Agent with Capabilities
 
-You can also define tools directly in the configuration:
+You can define advanced capabilities that require LLM reasoning:
 
 ```json
 {
-  "agent_name": "my-agent",
+  "agent_name": "research-agent",
   "llm_provider": "groq",
   "llm_api_key": "YOUR_API_KEY_HERE",
-  "tools": [
+  "capabilities": [
     {
-      "name": "custom_tool",
-      "description": "A custom tool",
-      "server_name": "local",
+      "name": "summarize_document",
+      "description": "Summarize a document in a concise way",
       "input_schema": {
         "type": "object",
         "properties": {
-          "param1": {
+          "document_text": {
             "type": "string",
-            "description": "Parameter 1"
+            "description": "The text of the document to summarize"
+          },
+          "max_length": {
+            "type": "integer",
+            "description": "Maximum length of the summary in words",
+            "default": 200
           }
         },
-        "required": ["param1"]
-      }
+        "required": ["document_text"]
+      },
+      "prompt_template": "Summarize the following document in {max_length} words or fewer:\n\n{document_text}"
     }
   ]
 }
@@ -114,51 +119,46 @@ You can also specify a custom server name:
 python agent_runner.py --config=my_agent_config.json --server-mode --server-name=my-custom-server
 ```
 
-## Creating Local Tools
+## Agent Capabilities
 
-Create a Python file with tool implementations using the `@agent_tools.register` decorator:
+Agent capabilities are high-level functions that require LLM reasoning, defined in your configuration file:
 
-```python
-from agent_tool import agent_tools
+1. **Defining Capabilities**: Each capability has a name, description, input schema, and prompt template
+2. **Prompt Templates**: Use string formatting syntax (e.g., `{parameter_name}`) to insert arguments
+3. **Execution Flow**: When a capability is called, the agent will:
+   - Format the prompt with the provided arguments
+   - Start a reasoning process with access to its tools
+   - Return the final result after the reasoning is complete
 
-@agent_tools.register
-async def my_tool(param1: str, param2: int = 0) -> str:
-    """Tool description goes here."""
-    return f"Processed {param1} with {param2}"
+Capabilities are automatically exposed as tools to higher-level agents, allowing for complex delegation.
 
-@agent_tools.register(name="custom_name", description="Custom description")
-async def another_tool(input_data: str) -> str:
-    return f"Processed: {input_data}"
-```
+## Example Workflow with Capabilities
 
-Import this file in your application to register the tools with the agent.
-
-## Creating a Hierarchical Agent Structure
-
-1. Create configuration files for base agents
-2. Set them to run in server mode
-3. Create an orchestrator configuration that connects to the base agents
-4. Run the orchestrator to interact with all agent capabilities
-
-## Example Workflow
-
-1. Start base agents in server mode:
+1. Start a specialized agent with capabilities in server mode:
    ```bash
-   python agent_runner.py --config=agent1_config.json --server-mode
-   python agent_runner.py --config=agent2_config.json --server-mode
+   python agent_runner.py --config=research_agent_config.json --server-mode
    ```
 
-2. Start the orchestrator agent in client mode:
+2. Start the orchestrator that connects to this agent:
    ```bash
-   python agent_runner.py --config=orchestrator_config.json
+   python agent_runner.py --config=master_orchestrator_config.json
    ```
 
-The orchestrator will connect to both base agents and can use all their tools as if they were its own.
+3. The orchestrator can now delegate complex tasks to the specialized agent using its capabilities:
+   ```
+   You: Can you help me research machine learning?
+   ```
+
+4. The orchestrator will delegate to the research agent's "research_topic" capability, which will:
+   - Start its own reasoning process about machine learning
+   - Use its search tools to gather information
+   - Return a comprehensive response to the orchestrator
+   - The orchestrator will then present the results to you
 
 ## Architecture Benefits
 
 1. **Hierarchical Composition**: Agents can use other agents' capabilities
 2. **Encapsulation**: Each agent encapsulates a specific domain or capability
-3. **Scalability**: Easy to add new agents to the hierarchy
-4. **Flexibility**: Agents can run in client mode, server mode, or both
-5. **Reusability**: Agent capabilities can be reused across different contexts
+3. **Reasoning Delegation**: Complex tasks can be delegated to specialized agents
+4. **Flexibility**: Capabilities can use any tools available to the agent
+5. **Configuration-Driven**: Define capabilities through simple configuration files

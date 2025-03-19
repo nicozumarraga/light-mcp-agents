@@ -28,25 +28,42 @@ class MCPServerWrapper(Server):
         self.call_tool()(self._call_tool)
 
     async def _list_tools(self) -> List[MCPTool]:
-        """List all tools from the agent's tool registry."""
-        self.logger.info("Listing tools from agent's tool registry")
+        """List all tools and capabilities from the agent."""
+        self.logger.info("Listing tools and capabilities from agent's registries")
+
+        # Get regular tools
         tools = self.agent.tool_registry.list_tools()
-        return [self._convert_to_mcp_tool(tool) for tool in tools]
+        tool_schemas = [self._convert_to_mcp_tool(tool) for tool in tools]
+
+        # Get capabilities as tools
+        capabilities = self.agent.capability_registry.list_capabilities()
+        capability_schemas = [capability.to_mcp_tool() for capability in capabilities]
+
+        # Combine and return all tools
+        return tool_schemas + capability_schemas
 
     async def _call_tool(self, name: str, arguments: dict = None) -> List[TextContent]:
-        """Execute a tool through the agent."""
-        self.logger.info(f"Calling tool: {name} with arguments: {arguments}")
-        try:
-            # Format the tool call as expected by the agent
-            tool_call = {"tool": name, "arguments": arguments or {}}
+        """Execute a tool or capability through the agent."""
+        arguments = arguments or {}
+        self.logger.info(f"Calling tool/capability: {name} with arguments: {arguments}")
 
-            # Execute the tool call through the agent
+        try:
+            # Check if it's a capability
+            capability = self.agent.capability_registry.get_capability(name)
+            if capability:
+                # Execute as a capability with LLM reasoning
+                self.logger.info(f"Executing as capability: {name}")
+                result = await self.agent.execute_capability(name, arguments)
+                return [TextContent(type="text", text=result)]
+
+            # Otherwise, handle as a regular tool
+            tool_call = {"tool": name, "arguments": arguments}
             result, is_tool_call = await self.agent.execute_tool_call(tool_call)
 
-            self.logger.info(f"Tool execution result: {result}")
+            self.logger.info(f"Tool/capability execution result: {result}")
             return [TextContent(type="text", text=result)]
         except Exception as e:
-            error_msg = f"Error executing tool {name}: {str(e)}"
+            error_msg = f"Error executing tool/capability {name}: {str(e)}"
             self.logger.error(error_msg)
             return [TextContent(type="text", text=error_msg)]
 

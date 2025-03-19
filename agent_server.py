@@ -13,6 +13,7 @@ from groq_llm import GroqLLM  # Assuming you have this
 from context import get_context, initialize_context, cleanup_context
 from mcp_connection_manager import MCPConnectionManager
 from tool import ToolRegistry
+from capability import CapabilityRegistry
 from mcp_server_wrapper import MCPServerWrapper
 
 
@@ -34,6 +35,7 @@ class AgentServer:
         self.server = None
         self.connection_manager = None
         self.tool_registry = None
+        self.capability_registry = None
         self.llm_client = None
         self.logger = logging.getLogger("agent-server")
 
@@ -46,8 +48,9 @@ class AgentServer:
         # Create connection manager
         self.connection_manager = MCPConnectionManager()
 
-        # Create tool registry
+        # Create registries
         self.tool_registry = ToolRegistry()
+        self.capability_registry = CapabilityRegistry()
 
         # Create LLM client
         self.llm_client = self._create_llm_client()
@@ -57,11 +60,15 @@ class AgentServer:
             llm_client=self.llm_client,
             connection_manager=self.connection_manager,
             tool_registry=self.tool_registry,
+            capability_registry=self.capability_registry,
             name=self.config.get("agent_name", "agent")
         )
 
         # Connect to servers and discover tools
         await self._connect_to_servers_and_discover_tools()
+
+        # Load capabilities from config
+        await self._load_capabilities()
 
         # If in server mode, initialize the server wrapper
         if self.server_mode:
@@ -112,6 +119,19 @@ class AgentServer:
             self.logger.info(f"Discovered {len(tools)} tools from MCP servers")
         except Exception as e:
             self.logger.error(f"Error connecting to servers or discovering tools: {e}")
+            raise
+
+    async def _load_capabilities(self):
+        """Load capabilities from the configuration."""
+        try:
+            self.logger.info("Loading capabilities from configuration")
+            await self.capability_registry.load_from_config(self.config)
+
+            # Log the capabilities that were loaded
+            capabilities = self.capability_registry.list_capabilities()
+            self.logger.info(f"Loaded {len(capabilities)} capabilities from configuration")
+        except Exception as e:
+            self.logger.error(f"Error loading capabilities: {e}")
             raise
 
     def _create_llm_client(self) -> BaseLLM:

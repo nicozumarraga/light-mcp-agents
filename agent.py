@@ -12,6 +12,7 @@ from base_llm import BaseLLM
 from context import get_context
 from mcp_connection_manager import MCPConnectionManager
 from tool import Tool, ToolRegistry
+from capability import CapabilityRegistry
 
 
 class Agent:
@@ -24,12 +25,14 @@ class Agent:
         llm_client: BaseLLM,
         connection_manager: MCPConnectionManager,
         tool_registry: ToolRegistry,
+        capability_registry: Optional[CapabilityRegistry] = None,
         max_tool_chain_length: int = 10,
         name: str = "agent"
     ):
         self.llm_client = llm_client
         self.connection_manager = connection_manager
         self.tool_registry = tool_registry
+        self.capability_registry = capability_registry or CapabilityRegistry()
         self.max_tool_chain_length = max_tool_chain_length
         self.name = name
         self.logger = logging.getLogger(f"agent:{name}")
@@ -112,7 +115,7 @@ class Agent:
         return (
             "You are a helpful assistant with access to these tools:\n\n"
             f"{tools_description}\n"
-            "Choose the appropriate tool based on the user's question. "
+            "Choose the appropriate tool based on the task. "
             "If no tool is needed, reply directly.\n\n"
             "IMPORTANT: When you need to use a tool:\n"
             "1. You can first provide a natural language response to the user\n"
@@ -126,14 +129,65 @@ class Agent:
             "When you receive a tool result, you can provide another natural language response "
             "and then decide if you need more information. "
             "If yes, include another tool call in the same format. "
-            "If no, simply give your final answer.\n\n"
-            "Guidelines for responses:\n"
-            "1. Transform raw data into natural, conversational responses\n"
-            "2. Keep responses concise but informative\n"
-            "3. Focus on the most relevant information\n"
-            "4. Maintain a conversational flow\n"
-            "Please use only the tools that are explicitly defined above."
+            "If no, simply give your final answer."
         )
+
+    async def execute_capability(self, capability_name: str, arguments: Dict[str, Any]) -> str:
+        """Execute a capability using the agent's reasoning.
+
+        Args:
+            capability_name: Name of the capability to execute
+            arguments: Arguments to pass to the capability
+
+        Returns:
+            Result of the capability execution
+        """
+        capability = self.capability_registry.get_capability(capability_name)
+        if not capability:
+            return f"No capability found with name: {capability_name}"
+
+        # Create prompt for the capability
+        prompt = capability.format_prompt(arguments)
+
+        # Create conversation history
+        messages = [
+            {"role": "system", "content": self.create_tools_system_message()},
+            {"role": "user", "content": prompt}
+        ]
+
+        # Start capability chain-of-thought
+        self.logger.info(f"Executing capability: {capability_name} with arguments: {arguments}")
+
+        # Process in a loop (similar to start_conversation but for a single exchange)
+        chain_length = 0
+        is_tool_call = True
+        result = None
+
+        while is_tool_call and chain_length < self.max_tool_chain_length:
+            # Get response from LLM
+            llm_response = self.llm_client.get_response(messages)
+
+            # Process response to check for tool calls
+            result, is_tool_call, human_text = await self.process_llm_response(llm_response)
+
+            # Add the LLM's response to the conversation
+            messages.append({"role": "assistant", "content": llm_response})
+
+            # If tool was called, add result and continue chain
+            if is_tool_call:
+                messages.append({"role": "system", "content": result})
+                chain_length += 1
+            elif not result and human_text:
+                # Use the human text as the result if available
+                result = human_text
+
+        # Get final answer if needed
+        if chain_length >= self.max_tool_chain_length:
+            final_response = "Maximum capability processing chain length reached."
+            self.logger.warning(final_response)
+
+        self.logger.info(f"Capability {capability_name} execution completed")
+        return result
 
     async def start_conversation(self) -> None:
         """Start a conversation with the user."""
