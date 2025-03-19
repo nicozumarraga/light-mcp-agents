@@ -1,3 +1,4 @@
 venv/
 .env
 example-mcp-agent/
+*.json
