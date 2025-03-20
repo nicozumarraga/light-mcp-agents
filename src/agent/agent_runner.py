@@ -8,9 +8,13 @@ import argparse
 import json
 import logging
 import sys
+import os
 from typing import Dict, Any
 
-from agent_server import AgentServer
+# Add the project root to the Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from src.agent.agent_server import AgentServer
 
 # Configure logging
 logging.basicConfig(

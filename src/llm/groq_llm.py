@@ -2,7 +2,7 @@ import logging
 import httpx
 from typing import List, Dict, Any, Optional
 
-from base_llm import BaseLLM
+from src.llm.base_llm import BaseLLM
 
 
 class GroqLLM(BaseLLM):

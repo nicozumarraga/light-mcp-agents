@@ -48,6 +48,14 @@ When a capability is called, the following steps occur:
 ## Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/mcp-agents.git
+cd mcp-agents
+
+# Create a virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -171,6 +179,69 @@ For an orchestrator agent that connects to other agents:
   }
 }
 ```
+
+## Running Example Agents
+
+The repository includes example agents in the `examples/` directory that you can run to get started. We provide a convenient `run_agent.py` script that makes it easy to run these examples.
+
+### Quick Start with Example Agents
+
+Run one of the built-in example agents:
+
+```bash
+# Run the base agent example (simple client agent)
+./run_agent.py --example base_agent
+
+# Run the orchestrator-researcher example (demonstrates agent hierarchy)
+./run_agent.py --example orchestrator_researcher
+```
+
+### Understanding Example Agents
+
+1. **Base Agent** (`examples/base_agent/`)
+   - A simple agent that connects to external tool servers
+   - Demonstrates basic agent functionality
+   - Configured to use tools like web search
+
+2. **Orchestrator-Researcher** (`examples/orchestrator_researcher/`)
+   - Demonstrates a hierarchical agent structure
+   - An orchestrator agent that delegates to a specialized research agent
+   - Shows how capabilities can be shared between agents
+
+### Running Examples with Additional Options
+
+You can also run the examples with additional configuration options:
+
+```bash
+# Run base agent in server mode (makes it available to other agents)
+./run_agent.py --example base_agent --server-mode
+
+# Run with a custom server name
+./run_agent.py --example base_agent --server-mode --server-name "my-custom-agent"
+
+# Run using a specific config file path
+./run_agent.py --config examples/base_agent/base_agent_config.json
+```
+
+### Testing Your Setup
+
+After installation, verify your setup by running the base agent:
+
+```bash
+# Run the base agent in interactive mode
+./run_agent.py --example base_agent
+
+# If successful, you'll be able to chat with the agent and use its tools
+```
+
+### Troubleshooting Example Agents
+
+If you encounter issues running the examples:
+
+1. Check that your LLM API keys are properly configured
+2. Make sure any external tool servers (like search tools) are accessible
+3. Verify that Python can find the modules (the src directory should be in your Python path)
+4. Check the logs for any specific error messages
 
 ## Running an Agent
 

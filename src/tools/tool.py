@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from mcp import ClientSession
 
-from context import get_context
-from mcp_connection_manager import MCPConnectionManager
+from src.utils.context import get_context
+from src.mcp.mcp_connection_manager import MCPConnectionManager
 
 
 class Tool:

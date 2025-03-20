@@ -2,13 +2,13 @@ import asyncio
 import logging
 from typing import Dict, Any
 
-from agent import Agent
-from base_llm import BaseLLM
-from config import load_config
-from context import get_context, initialize_context, cleanup_context
-from groq_llm import GroqLLM
-from mcp_connection_manager import MCPConnectionManager
-from tool import ToolRegistry
+from src.agent.agent import Agent
+from src.llm.base_llm import BaseLLM
+from src.utils.config import load_config
+from src.utils.context import get_context, initialize_context, cleanup_context
+from src.llm.groq_llm import GroqLLM
+from src.mcp.mcp_connection_manager import MCPConnectionManager
+from src.tools.tool import ToolRegistry
 
 # Configure logging
 logging.basicConfig(

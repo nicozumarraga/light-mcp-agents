@@ -9,8 +9,8 @@ from mcp.server.lowlevel.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import CallToolResult, Tool as MCPTool, TextContent
 
-from agent import Agent
-from tool import Tool
+from src.agent.agent import Agent
+from src.tools.tool import Tool
 
 
 class MCPServerWrapper(Server):

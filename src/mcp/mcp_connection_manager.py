@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-from context import get_context, Context
+from src.utils.context import get_context, Context
 
 
 class ServerConnection:
@@ -69,7 +69,7 @@ class ServerConnection:
                 env=env,
             )
 
-            # Initialize stdio client - this happens in THIS task
+            # Initialize stdio client
             stdio_transport = await exit_stack.enter_async_context(
                 stdio_client(server_params)
             )

@@ -7,14 +7,14 @@ import logging
 import json
 from typing import Dict, Any, Optional
 
-from agent import Agent
-from base_llm import BaseLLM
-from groq_llm import GroqLLM
-from context import get_context, initialize_context, cleanup_context
-from mcp_connection_manager import MCPConnectionManager
-from tool import ToolRegistry
-from capability import CapabilityRegistry
-from mcp_server_wrapper import MCPServerWrapper
+from src.agent.agent import Agent
+from src.llm.base_llm import BaseLLM
+from src.llm.groq_llm import GroqLLM
+from src.utils.context import get_context, initialize_context, cleanup_context
+from src.mcp.mcp_connection_manager import MCPConnectionManager
+from src.tools.tool import ToolRegistry
+from src.capabilities.capability import CapabilityRegistry
+from src.mcp.mcp_server_wrapper import MCPServerWrapper
 
 
 class AgentServer:
