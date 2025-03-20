@@ -222,6 +222,34 @@ The recursive architecture is built on the MCP (Model Context Protocol) standard
 3. **Tool Aggregation**: Tools from lower-level agents are automatically exposed to higher-level agents.
 4. **Recursive Reasoning**: Each agent can perform its own reasoning process using its available tools. A limit to this recursion can be set.
 
+## Running Agents in Claude Desktop
+
+Claude Desktop supports MCP agents through its configuration system. You can configure and run your agents directly in Claude, enabling it to use your custom capabilities.
+
+### Setup Steps
+
+1. Locate your Claude Desktop configuration file:
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+   - Linux: `~/.config/Claude/claude_desktop_config.json`
+
+2. Add your agent configuration to the `mcpServers` section:
+
+```json
+{
+  "mcpServers": {
+    "research-agent": {
+      "command": "/bin/bash",
+      "args": ["-c", "/path/to/your/venv/bin/python /path/to/your/agent_runner.py --config=/path/to/your/agent_config.json --server-mode"],
+      "env": {
+        "PYTHONPATH": "/path/to/your/project",
+        "PATH": "/path/to/your/venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  }
+}
+```
+
 ### Key Components
 
 1. **AgentServer**: Main class that manages an agent in both client and server modes, handling initialization, connection to other servers, and tool/capability discovery.
