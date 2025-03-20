@@ -4,7 +4,7 @@ This project implements a recursive agent architecture that allows agents to fun
 
 ## Architecture Overview
 
-The recursive architecture is built on the MCP (Machine Conversation Protocol) standard and enables:
+The recursive architecture is built on the MCP (Model Context Protocol) standard and enables:
 
 1. **Agent Hierarchy**: Agents can be arranged in a hierarchical structure where higher-level agents delegate tasks to specialized lower-level agents.
 2. **Capability Delegation**: Complex tasks requiring reasoning can be delegated to specialized agents through capabilities.
