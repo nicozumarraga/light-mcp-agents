@@ -220,7 +220,7 @@ The recursive architecture is built on the MCP (Model Context Protocol) standard
 1. **Agent Hierarchy**: Agents can be arranged in a hierarchical structure where higher-level agents delegate tasks to specialized lower-level agents.
 2. **Capability Delegation**: Complex tasks requiring reasoning can be delegated to specialized agents through capabilities.
 3. **Tool Aggregation**: Tools from lower-level agents are automatically exposed to higher-level agents.
-4. **Recursive Reasoning**: Each agent can perform its own reasoning process using its available tools.
+4. **Recursive Reasoning**: Each agent can perform its own reasoning process using its available tools. A limit to this recursion can be set.
 
 ### Key Components
 
@@ -235,6 +235,6 @@ The recursive architecture is built on the MCP (Model Context Protocol) standard
 1. **Hierarchical Composition**: Agents can use other agents' capabilities, creating a powerful composition model.
 2. **Encapsulation**: Each agent encapsulates a specific domain or capability.
 3. **Reasoning Delegation**: Complex tasks can be delegated to specialized agents.
-4. **Tool Propagation**: Tools available to lower-level agents are accessible through capabilities to higher-level agents.
+4. **Tool Propagation**: Tools available to lower-level agents are accessible through capabilities to higher-level agents and with direct access.
 5. **Configuration-Driven**: Define capabilities through simple configuration files without changing code.
 6. **Scalability**: Add new capabilities or specialized agents without modifying existing ones.
