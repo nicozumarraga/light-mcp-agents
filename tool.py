@@ -30,6 +30,7 @@ class Tool:
         self.server_name = server_name
         self.logger = logging.getLogger(f"tool:{name}")
 
+    # _TODO: Might want to move the formatting to each of the LLM provider classes, to adjust for each provider.
     def format_for_llm(self) -> str:
         """Format tool information for LLM consumption."""
         args_desc = []

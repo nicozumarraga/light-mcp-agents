@@ -93,6 +93,7 @@ class Agent:
                     connection_manager=self.connection_manager,
                 )
 
+                # _TODO: what is this progress and should we keep it? where is it useful.
                 if isinstance(result, dict) and "progress" in result:
                     progress = result["progress"]
                     total = result["total"]
@@ -126,6 +127,7 @@ class Agent:
             '        "argument-name": "value"\n'
             "    }\n"
             "}\n\n"
+            "IMPORTANT:  Always structure your tool calls in this way. "
             "When you receive a tool result, you can provide another natural language response "
             "and then decide if you need more information. "
             "If yes, include another tool call in the same format. "
@@ -175,7 +177,7 @@ class Agent:
 
             # If tool was called, add result and continue chain
             if is_tool_call:
-                messages.append({"role": "system", "content": result})
+                messages.append({"role": "system", "content": result}) #_TODO: Role Assistant or System?
                 chain_length += 1
             elif not result and human_text:
                 # Use the human text as the result if available
