@@ -182,7 +182,7 @@ For an orchestrator agent that connects to other agents:
 
 ## Running Example Agents
 
-The repository includes example agents in the `examples/` directory that you can run to get started. We provide a convenient `run_agent.py` script that makes it easy to run these examples.
+The repository includes example agents in the `examples/` directory that you can run to get started.
 
 ### Quick Start with Example Agents
 
@@ -190,10 +190,13 @@ Run one of the built-in example agents:
 
 ```bash
 # Run the base agent example (simple client agent)
-./run_agent.py --example base_agent
+python src/agent/agent_runner.py --config examples/base_agent/base_agent_config.json
 
 # Run the orchestrator-researcher example (demonstrates agent hierarchy)
-./run_agent.py --example orchestrator_researcher
+python src/agent/agent_runner.py --config examples/orchestrator_researcher/research_agent_config.json
+
+# In a separate terminal run the orchestrator
+python src/agent/agent_runner.py --config examples/orchestrator_researcher/master_orchestrator_config.json
 ```
 
 ### Understanding Example Agents
