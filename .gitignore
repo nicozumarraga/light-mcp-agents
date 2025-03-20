@@ -1,4 +1,3 @@
 venv/
 .env
-*.json
 examples.env/

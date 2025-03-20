@@ -1,0 +1,65 @@
+{
+  "agent_name": "research-agent",
+  "llm_provider": "groq",
+  "llm_api_key": "YOUR_API_KEY",
+  "server_mode": true,
+  "server_name": "research-agent-server",
+  "capabilities": [
+    {
+      "name": "summarize_document",
+      "description": "Summarize a document in a concise way",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "document_text": {
+            "type": "string",
+            "description": "The text of the document to summarize"
+          },
+          "max_length": {
+            "type": "integer",
+            "description": "Maximum length of the summary in words",
+            "default": 200
+          }
+        },
+        "required": ["document_text"]
+      },
+      "prompt_template": "Summarize the following document in {max_length} words or fewer:\n\n{document_text}"
+    },
+    {
+      "name": "research_topic",
+      "description": "Research a topic and provide key information",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "The topic to research"
+          },
+          "focus_areas": {
+            "type": "string",
+            "description": "Specific aspects to focus on",
+            "default": "main concepts, history, and applications"
+          }
+        },
+        "required": ["topic"]
+      },
+      "prompt_template": "Research the topic '{topic}' and provide key information. Focus on these aspects: {focus_areas}. Use the search tools to find relevant information."
+    }
+  ],
+  "servers": {
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BRAVE_API_KEY",
+        "mcp/brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}

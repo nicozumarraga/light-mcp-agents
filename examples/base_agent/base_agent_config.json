@@ -1,0 +1,26 @@
+{
+  "agent_name": "base-agent",
+  "llm_provider": "groq",
+  "llm_api_key": "YOUR_API_KEY",
+  "server_mode": false,
+  "servers": {
+    "kanye": {
+      "command": "npx",
+      "args": ["-y", "kanye-mcp"]
+    },
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BRAVE_API_KEY",
+        "mcp/brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}

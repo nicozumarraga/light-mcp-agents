@@ -1,0 +1,17 @@
+{
+  "agent_name": "master-orchestrator",
+  "llm_provider": "groq",
+  "llm_api_key": "YOUR_API_KEY",
+  "server_mode": false,
+  "servers": {
+    "research-agent": {
+      "command": "python",
+      "args": ["agent_runner.py", "--config=research_agent_config.json", "--server-mode"],
+      "env": {}
+    },
+    "kanye": {
+      "command": "npx",
+      "args": ["-y", "kanye-mcp"]
+    }
+  }
+}
