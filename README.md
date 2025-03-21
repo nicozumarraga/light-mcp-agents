@@ -1,10 +1,15 @@
-# Light MCP Agents 🚀
+# 🚀 Light MCP Agents 
 
 ## What is it?
 
 Light MCP Agents is a lightweight framework for building and orchestrating AI agents using the Model Context Protocol (MCP). It enables the creation of hierarchical agent systems where specialized agents can delegate tasks, share capabilities, and collaborate to solve complex problems.
 With a configuration-driven approach, you can quickly build sophisticated agent networks without extensive coding in a composable architecture.
 
+## Why does it matter?
+
+✅ Create agents connecting to any MCP Server with a simple configuration file.
+✅ Create multi-agent workflows with no additional code. Just one config file per agent.
+✅ Easily share your agents configurations with others to run.
 
 ## Architecture Overview
 <img width="725" alt="light-mcp-agents-diagram" src="https://github.com/user-attachments/assets/9a69e2da-403e-40e3-9f6f-4cf484dc7444" />
