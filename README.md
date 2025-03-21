@@ -8,7 +8,9 @@ With a configuration-driven approach, you can quickly build sophisticated agent 
 ## Why does it matter?
 
 ✅ Create agents connecting to any MCP Server with a simple configuration file.
+
 ✅ Create multi-agent workflows with no additional code. Just one config file per agent.
+
 ✅ Easily share your agents configurations with others to run.
 
 ## Architecture Overview
