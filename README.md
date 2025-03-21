@@ -15,8 +15,8 @@ With a configuration-driven approach, you can quickly build sophisticated agent 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mcp-agents.git
-cd mcp-agents
+git clone https://github.com/nicozumarraga/light-mcp-agents.git
+cd light-mcp-agents
 
 # Create a virtual environment
 python -m venv venv
@@ -47,7 +47,7 @@ In a second terminal, start the orchestrator that connects to the research agent
 python src/agent/agent_runner.py --config examples/orchestrator_researcher/master_orchestrator_config.json
 ```
 
-Now you can ask the orchestrator to research topics for you, and it will delegate to the specialized research agent.
+Now you can ask the orchestrator to research topics for you, and it will delegate to the specialized research agent or use its tools directly.
 
 ## Example Agents
 
