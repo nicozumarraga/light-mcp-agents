@@ -1,4 +1,4 @@
-# 🚀 Light MCP Agents 
+# 🚀 Light MCP Agents
 
 ## What is it?
 
@@ -15,6 +15,27 @@ With a configuration-driven approach, you can quickly build sophisticated agent 
 
 ## Architecture Overview
 <img width="725" alt="light-mcp-agents-diagram" src="https://github.com/user-attachments/assets/9a69e2da-403e-40e3-9f6f-4cf484dc7444" />
+
+## Table of Contents
+- [Quick Start](#quick-start)
+  - [Installation](#installation)
+  - [Run Your First Agent](#run-your-first-agent)
+  - [Try a Multi-Agent Example](#try-a-multi-agent-example)
+  - [Running Agents in Claude Desktop](#running-agents-in-claude-desktop)
+- [Example Agents](#example-agents)
+- [Running Options](#running-options)
+  - [Basic Command Structure](#basic-command-structure)
+  - [Additional Options](#additional-options)
+- [Creating Your Own Agents](#creating-your-own-agents)
+  - [Basic Agent Configuration](#basic-agent-configuration)
+  - [Agent with Capabilities](#agent-with-capabilities)
+  - [Orchestrator Agent Configuration](#orchestrator-agent-configuration)
+- [How It Works](#how-it-works)
+  - [Agent Capabilities](#agent-capabilities)
+  - [Example: Research Workflow](#example-research-workflow)
+- [Architecture Details](#architecture-details)
+  - [Key Components](#key-components)
+  - [Architecture Benefits](#architecture-benefits)
 
 ## Quick Start
 
@@ -56,6 +77,34 @@ python src/agent/agent_runner.py --config examples/orchestrator_researcher/maste
 
 Now you can ask the orchestrator to research topics for you, and it will delegate to the specialized research agent or use its tools directly.
 
+### Running Agents in Claude Desktop
+
+Claude Desktop supports MCP agents through its configuration system. You can configure and run your agents directly in Claude, enabling it to use your custom capabilities.
+
+#### Setup Steps
+
+1. Locate your Claude Desktop configuration file:
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+   - Linux: `~/.config/Claude/claude_desktop_config.json`
+
+2. Add your agent configuration to the `mcpServers` section:
+
+```json
+{
+  "mcpServers": {
+    "research-agent": {
+      "command": "/bin/bash",
+      "args": ["-c", "/path/to/your/venv/bin/python /path/to/your/agent_runner.py --config=/path/to/your/agent_config.json --server-mode"],
+      "env": {
+        "PYTHONPATH": "/path/to/your/project",
+        "PATH": "/path/to/your/venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  }
+}
+```
+
 ## Example Agents
 
 The repository includes example agents in the `examples/` directory:
@@ -67,6 +116,8 @@ The repository includes example agents in the `examples/` directory:
 2. **Orchestrator-Researcher** (`examples/orchestrator_researcher/`)
    - Demonstrates a hierarchical agent structure
    - Shows how capabilities can be shared between agents
+
+🤝 Want to submit your own example architectures for the community? Reach out!
 
 ## Running Options
 
@@ -85,15 +136,6 @@ python src/agent/agent_runner.py --config <config_file_path> --server-mode
 # Run with a custom server name
 python src/agent/agent_runner.py --config <config_file_path> --server-mode --server-name "my-custom-server"
 ```
-
-### Troubleshooting
-
-If you encounter issues running the examples:
-
-1. Check that your LLM API keys are properly configured in the config files
-2. Make sure any external tool servers (like search tools) are accessible
-3. Verify that Python can find the modules (the src directory should be in your Python path)
-4. Check the logs for any specific error messages
 
 ## Creating Your Own Agents
 
@@ -199,7 +241,7 @@ Capabilities are high-level functions that require LLM reasoning. When a capabil
 3. It can use any tools available to it
 4. It returns the final result to the calling agent
 
-### Example: Research Workflow
+### Example: Researcher Workflow
 
 When you ask the orchestrator to research a topic:
 
@@ -229,34 +271,6 @@ The recursive architecture is built on the MCP (Model Context Protocol) standard
 3. **Tool Aggregation**: Tools from lower-level agents are automatically exposed to higher-level agents.
 4. **Recursive Reasoning**: Each agent can perform its own reasoning process using its available tools. A limit to this recursion can be set.
 
-## Running Agents in Claude Desktop
-
-Claude Desktop supports MCP agents through its configuration system. You can configure and run your agents directly in Claude, enabling it to use your custom capabilities.
-
-### Setup Steps
-
-1. Locate your Claude Desktop configuration file:
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-   - Linux: `~/.config/Claude/claude_desktop_config.json`
-
-2. Add your agent configuration to the `mcpServers` section:
-
-```json
-{
-  "mcpServers": {
-    "research-agent": {
-      "command": "/bin/bash",
-      "args": ["-c", "/path/to/your/venv/bin/python /path/to/your/agent_runner.py --config=/path/to/your/agent_config.json --server-mode"],
-      "env": {
-        "PYTHONPATH": "/path/to/your/project",
-        "PATH": "/path/to/your/venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-      }
-    }
-  }
-}
-```
-
 ### Key Components
 
 1. **AgentServer**: Main class that manages an agent in both client and server modes, handling initialization, connection to other servers, and tool/capability discovery.
@@ -273,3 +287,7 @@ Claude Desktop supports MCP agents through its configuration system. You can con
 4. **Tool Propagation**: Tools available to lower-level agents are accessible through capabilities to higher-level agents and with direct access.
 5. **Configuration-Driven**: Define capabilities through simple configuration files without changing code.
 6. **Scalability**: Add new capabilities or specialized agents without modifying existing ones.
+
+## Acknowledgements
+
+Some of the MCP Server resource management practices in this project were inspired by the great work at https://github.com/lastmile-ai/mcp-agent.
