@@ -1,7 +1,7 @@
 # 🚀 Light MCP Agents
 
 ### ⏳ TL;DR ⌛️
-Build and share composable MCP-powered multi-Agent workflows in less than 5 minutes with minimal code!
+Build and share composable MCP-powered multi-Agent workflows in a few minutes with minimal code.
 
 ## What is it?
 
