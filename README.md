@@ -290,4 +290,4 @@ The recursive architecture is built on the MCP (Model Context Protocol) standard
 
 ## Acknowledgements
 
-Some of the MCP Server resource management practices in this project were inspired by the great work at [mcp-agents](https://github.com/lastmile-ai/mcp-agent).
+The MCP Server resource management practices in this project were inspired by [mcp-agents](https://github.com/lastmile-ai/mcp-agent).
