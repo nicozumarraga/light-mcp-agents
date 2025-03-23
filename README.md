@@ -11,7 +11,7 @@ With a configuration-driven approach, you can quickly build sophisticated agent 
 
 ✅ Create multi-agent workflows with no additional code. Just one config file per agent.
 
-✅ Easily share your agents configurations with others to run. Just plug and play :)
+✅ Easily share your agents configurations with others to run.
 
 ## Architecture Overview
 <img width="725" alt="light-mcp-agents-diagram" src="https://github.com/user-attachments/assets/9a69e2da-403e-40e3-9f6f-4cf484dc7444" />
